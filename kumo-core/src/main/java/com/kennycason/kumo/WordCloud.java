@@ -242,7 +242,10 @@ public class WordCloud {
         for (final WordFrequency wordFrequency : wordFrequencies) {
             // the text shouldn't be empty, however, in case of bad normalizers/tokenizers, this may happen
             if (!wordFrequency.getWord().isEmpty()) {
-                words.add(buildWord(wordFrequency, maxFrequency, colorPalette));
+                Word word = buildWord(wordFrequency, maxFrequency, colorPalette);
+                if (word != null) {
+                    words.add(word);
+                }
             }
         }
         return words;
@@ -260,6 +263,11 @@ public class WordCloud {
         final FontMetrics fontMetrics = graphics.getFontMetrics(font);
         
         final double theta = angleGenerator.randomNext();
+
+        if (fontMetrics.stringWidth(wordFrequency.getWord()) <= 0) {
+            return null;
+        }
+
         final Word word = new Word(
                 wordFrequency.getWord(), colorPalette.next(), 
                 fontMetrics, this.collisionChecker, theta
